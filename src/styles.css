@@ -1,0 +1,289 @@
+@import 'tailwindcss' source('../');
+
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+body {
+  @apply m-0;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+:root {
+  /* Brand palette — do not change */
+  --pw-blush: #fde3eb;
+  --pw-rose: #f2b0cd;
+  --pw-sweet: #f195bc;
+  --pw-baby-blue: #d2ecfb;
+  --pw-cream: #feeff3;
+  --pw-dusty: #c98aa5;
+
+  --font-body: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-body);
+  --font-title: 'Dancing Script', 'Lora', serif;
+  --content-width: 80rem;
+  --reading-width: 42rem;
+  --background: var(--pw-cream);
+  --foreground: #4a2e3b;
+  --card: #fffafc;
+  --card-foreground: #4a2e3b;
+  --popover: #fffafc;
+  --popover-foreground: #4a2e3b;
+  --primary: var(--pw-sweet);
+  --primary-foreground: #3f1f2e;
+  --secondary: var(--pw-baby-blue);
+  --secondary-foreground: #24485c;
+  --muted: var(--pw-blush);
+  --muted-foreground: #8a6577;
+  --accent: var(--pw-blush);
+  --accent-foreground: #4a2e3b;
+  --destructive: #d9536f;
+  --destructive-foreground: #fff;
+  --border: #f6cfdf;
+  --input: #f2c3d7;
+  --ring: var(--pw-rose);
+  --chart-1: var(--pw-sweet);
+  --chart-2: #8cc6e6;
+  --chart-3: var(--pw-rose);
+  --chart-4: #e8c97a;
+  --chart-5: #9fd3b4;
+  --radius: 1rem;
+  --sidebar: #fff6f9;
+  --sidebar-foreground: #4a2e3b;
+  --sidebar-primary: var(--pw-sweet);
+  --sidebar-primary-foreground: #3f1f2e;
+  --sidebar-accent: var(--pw-blush);
+  --sidebar-accent-foreground: #4a2e3b;
+  --sidebar-border: #f6cfdf;
+  --sidebar-ring: var(--pw-rose);
+}
+
+.dark {
+  --background: #231a20;
+  --foreground: #fbe6ee;
+  --card: #2f232b;
+  --card-foreground: #fbe6ee;
+  --popover: #2f232b;
+  --popover-foreground: #fbe6ee;
+  --primary: var(--pw-sweet);
+  --primary-foreground: #2b1220;
+  --secondary: #2b3d48;
+  --secondary-foreground: var(--pw-baby-blue);
+  --muted: #3a2b34;
+  --muted-foreground: #cfa9bb;
+  --accent: #43303b;
+  --accent-foreground: #fbe6ee;
+  --destructive: #e46d86;
+  --destructive-foreground: #fff;
+  --border: #4a3541;
+  --input: #55404c;
+  --ring: var(--pw-sweet);
+  --sidebar: #2a1f26;
+  --sidebar-foreground: #fbe6ee;
+  --sidebar-primary: var(--pw-sweet);
+  --sidebar-primary-foreground: #2b1220;
+  --sidebar-accent: #43303b;
+  --sidebar-accent-foreground: #fbe6ee;
+  --sidebar-border: #4a3541;
+  --sidebar-ring: var(--pw-sweet);
+}
+
+@theme inline {
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
+  --font-title: var(--font-title);
+  --container-content: var(--content-width);
+  --container-reading: var(--reading-width);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ---------- Primpaii's Way brand touches ---------- */
+.pw-title {
+  font-family: var(--font-title);
+  color: #b8577f;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+.dark .pw-title {
+  color: var(--pw-rose);
+}
+.pw-ornament {
+  color: var(--pw-dusty);
+  font-size: clamp(0.7rem, 1.6vw, 0.9rem);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  text-align: center;
+  user-select: none;
+}
+.pw-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  box-shadow: 0 6px 24px -14px rgb(241 149 188 / 0.55);
+}
+.pw-surface {
+  background-image:
+    radial-gradient(circle at 10% 0%, rgb(253 227 235 / 0.9), transparent 45%),
+    radial-gradient(circle at 95% 15%, rgb(210 236 251 / 0.75), transparent 40%);
+}
+.dark .pw-surface {
+  background-image:
+    radial-gradient(circle at 10% 0%, rgb(241 149 188 / 0.08), transparent 45%),
+    radial-gradient(circle at 95% 15%, rgb(210 236 251 / 0.06), transparent 40%);
+}
+
+/* Floating decorations */
+.pw-float-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.pw-float {
+  position: absolute;
+  bottom: -3rem;
+  color: var(--pw-dusty);
+  opacity: 0.22;
+  animation: pw-float-up linear infinite;
+  will-change: transform;
+}
+@keyframes pw-float-up {
+  0% {
+    transform: translateY(0) rotate(-8deg);
+  }
+  50% {
+    transform: translateY(-55vh) rotate(8deg);
+  }
+  100% {
+    transform: translateY(-115vh) rotate(-6deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pw-float {
+    animation: none;
+    bottom: auto;
+    top: var(--pw-top);
+  }
+}
+
+/* Status pills */
+.pw-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.pw-pill::before {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+.pw-blue {
+  background: #d2ecfb;
+  color: #2a6488;
+  border-color: #b5dcf3;
+}
+.pw-yellow {
+  background: #fff3cf;
+  color: #8a6512;
+  border-color: #f5e0a3;
+}
+.pw-green {
+  background: #dcf3e4;
+  color: #2f7149;
+  border-color: #bfe5cc;
+}
+.pw-grey {
+  background: #eeeaec;
+  color: #6f6469;
+  border-color: #dcd5d8;
+}
+.pw-pink {
+  background: #fde3eb;
+  color: #b0436f;
+  border-color: #f2b0cd;
+}
+.dark .pw-blue {
+  background: #1f3a4a;
+  color: #bfe4fa;
+  border-color: #2f5468;
+}
+.dark .pw-yellow {
+  background: #3f3519;
+  color: #f5dc96;
+  border-color: #5a4b22;
+}
+.dark .pw-green {
+  background: #1e3a2a;
+  color: #b4e6c6;
+  border-color: #2e5440;
+}
+.dark .pw-grey {
+  background: #3a3336;
+  color: #cfc4c9;
+  border-color: #4c4448;
+}
+.dark .pw-pink {
+  background: #4a2636;
+  color: #f7bfd6;
+  border-color: #6a3a50;
+}
