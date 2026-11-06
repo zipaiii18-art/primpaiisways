@@ -5,6 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { NotFoundPage } from '@/components/error-pages'
 import { AppShell } from '@/components/app-shell'
 import { StoreProvider } from '@/lib/store'
+import { AuthProvider } from '@/lib/auth'
 import { MusicProvider } from '@/components/music-player'
 
 import '../styles.css'
@@ -72,11 +73,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <TooltipProvider>
-          <StoreProvider>
-            <MusicProvider>
-              <AppShell>{children}</AppShell>
-            </MusicProvider>
-          </StoreProvider>
+          <AuthProvider>
+            <StoreProvider>
+              <MusicProvider>
+                <AppShell>{children}</AppShell>
+              </MusicProvider>
+            </StoreProvider>
+          </AuthProvider>
         </TooltipProvider>
         <Toaster />
         <Scripts />

@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { data, error } = await sb().auth.signUp({
           email: email.trim(),
           password,
-          options: { emailRedirectTo: `${authSiteUrl()}/auth/callback` },
+          options: { emailRedirectTo: authSiteUrl() },
         })
         if (error) return { error: authMessage(error.message), needsConfirmation: false }
         // Supabase hides existing accounts by returning a user without identities.
@@ -115,13 +115,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { error } = await sb().auth.resend({
           type: 'signup',
           email: email.trim(),
-          options: { emailRedirectTo: `${authSiteUrl()}/auth/callback` },
+          options: { emailRedirectTo: authSiteUrl() },
         })
         return error ? authMessage(error.message) : null
       },
       async requestPasswordReset(email) {
         const { error } = await sb().auth.resetPasswordForEmail(email.trim(), {
-          redirectTo: `${authSiteUrl()}/reset-password`,
+          redirectTo: authSiteUrl(),
         })
         return error ? authMessage(error.message) : null
       },

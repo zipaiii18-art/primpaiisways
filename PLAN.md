@@ -8,8 +8,7 @@ The work is split into small milestones. Each one ships something usable.
 
 ## ✅ Milestone 1 — Product surface (done)
 
-The full branded app, clickable end to end, running on seeded sample data held in
-`src/lib/fixtures.ts` and served through one store (`src/lib/store.tsx`).
+The full branded app surface is implemented. Customer/order/warranty/playlist demo records have been removed; the store starts with empty record lists. Static dropdown presets and appearance defaults remain.
 
 - Brand: palette, title + ornament `꒷꒦︶꒷꒦︶ ๋ ࣭ ⭑꒷꒦`, floating decorations (pointer-events none, reduced-motion aware).
 - Navigation in the required order — Dashboard, Rekapan, Reminder, Garansi, Setting — as a left sidebar on desktop and a bottom bar on mobile.
@@ -21,17 +20,14 @@ The full branded app, clickable end to end, running on seeded sample data held i
 - Garansi: list, Add/Edit report (auto-fill from an order or manual), date + time for report and end, optional duration calculator, countdown, five statuses, detail sheet with status history, complete/reopen, delete-with-confirm. Deleting an order keeps its warranty reports (link cleared, snapshot kept).
 - Setting: light/dark, 5 body fonts, 5 title fonts + size, per-menu symbol picker (saved on device); My Little Playlist (audio URL / Spotify / YouTube embeds, play, pause, next, prev, volume, mute, repeat, shuffle, progress, rename, reorder, favorite, delete, no autoplay, one source at a time); spreadsheet preview + Open button + Apps Script URL field; Export CSV and Backup JSON.
 
-## Milestone 2 — Cloud database & accounts
+## ✅ Milestone 2 — Cloud database & accounts (implementation added; deployment verification pending)
 
-**Decision to confirm first:** the brief names an existing Supabase project
-(`primpaiisway`). Netlify also offers a built-in managed Postgres (Netlify Database)
-plus Netlify Identity, which needs no external keys. Pick one; the store API stays
-the same either way.
+Supabase project `vflgcsubicihvmzetyjk` is the selected backend.
 
 - Tables: `orders`, `custom_options` (unique per user + category + lower(name)), `user_settings` (appearance, Apps Script URL), `warranties` (fields from the brief; `order_id` nullable, `ON DELETE SET NULL`), `playlist_items`, `warranty_history`.
 - Owner-scoped access on every table (RLS on Supabase, or per-user server checks on Netlify Database).
-- Sign up, login, logout, session persistence, protected pages, loading + error states.
-- Replace the seeded state in `src/lib/store.tsx` with real queries; remove the preview banner.
+- Sign up, login, logout, session persistence, protected app shell, password reset/recovery, loading + data-load error states.
+- Supabase-backed load/upsert/delete operations are implemented in `src/lib/store.tsx`; the preview banner and demo records are removed.
 - Additive migrations only — never reset tables.
 
 ## Milestone 3 — Multi-device sync & resilience
