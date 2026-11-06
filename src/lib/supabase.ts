@@ -1,8 +1,8 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
 /** The deployed site. Auth emails always point here in production — never localhost. */
-export const PRODUCTION_SITE_URL = 'https://primpaiis-way-dashboard.netlify.app'
-const NETLIFY_HOST = 'primpaiis-way-dashboard.netlify.app'
+export const PRODUCTION_SITE_URL = 'https://primpaiisways.netlify.app'
+const NETLIFY_HOST = 'primpaiisways.netlify.app'
 
 const SUPABASE_URL: string =
   import.meta.env.VITE_SUPABASE_URL || 'https://vflgcsubicihvmzetyjk.supabase.co'

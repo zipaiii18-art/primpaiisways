@@ -1,8 +1,15 @@
+import * as React from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useStore } from '@/lib/store'
 import type { NavKey } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { MusicMiniPlayer } from '@/components/music-player'
+import { useAuth } from '@/lib/auth'
+import { supabaseConfigured, supabaseKeyProblem } from '@/lib/supabase'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { LogOut } from 'lucide-react'
 
 export const NAV: { key: NavKey; label: string; to: '/' | '/rekapan' | '/reminder' | '/garansi' | '/setting' }[] = [
   { key: 'dashboard', label: 'Dashboard', to: '/' },
@@ -67,9 +74,42 @@ export function BrandTitle({ compact = false }: { compact?: boolean }) {
   )
 }
 
+function AccountGate() {
+  const auth = useAuth()
+  const [mode, setMode] = React.useState<'login' | 'register' | 'reset'>('login')
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [busy, setBusy] = React.useState(false)
+  const [notice, setNotice] = React.useState('')
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault(); setBusy(true); setNotice('')
+    try {
+      if (mode === 'login') {
+        const error = await auth.signIn(email, password)
+        if (error) setNotice(error)
+      } else if (mode === 'register') {
+        const result = await auth.signUp(email, password)
+        if (result.error) setNotice(result.error)
+        else setNotice(result.needsConfirmation ? 'Akun berhasil dibuat. Buka email untuk konfirmasi, lalu kembali dan login.' : 'Akun berhasil dibuat!')
+      } else {
+        const error = await auth.requestPasswordReset(email)
+        setNotice(error ?? 'Link reset password sudah dikirim jika email terdaftar.')
+      }
+    } catch (error) { setNotice(error instanceof Error ? error.message : 'Terjadi kesalahan. Coba lagi.') }
+    finally { setBusy(false) }
+  }
+  if (auth.status === 'loading') return <div className="grid min-h-dvh place-items-center text-sm text-muted-foreground">Menyiapkan Primpaii&apos;s Way…</div>
+  if (!supabaseConfigured || auth.status === 'unconfigured') return <div className="grid min-h-dvh place-items-center p-5"><div className="pw-card max-w-lg p-7 text-center"><h1 className="font-display text-3xl font-extrabold">Primpaii&apos;s Way</h1><p className="mt-3 text-sm text-muted-foreground">Supabase belum dikonfigurasi. Tambahkan VITE_SUPABASE_URL dan VITE_SUPABASE_PUBLISHABLE_KEY di Environment variables Netlify, lalu deploy ulang.</p><p className="mt-2 text-xs text-muted-foreground">Kode konfigurasi: {supabaseKeyProblem}</p></div></div>
+  if (auth.status === 'signedOut') return <div className="pw-surface relative grid min-h-dvh place-items-center overflow-hidden p-5"><div className="pw-card w-full max-w-md p-7 sm:p-9"><div className="text-center"><div className="font-display text-3xl font-extrabold">Primpaii&apos;s Way</div><p className="pw-ornament mt-2">꒷꒦︶꒷꒦︶ ๋ ࣭ ⭑꒷꒦</p><h1 className="mt-5 text-xl font-extrabold">{mode === 'login' ? 'Welcome back, pretty!' : mode === 'register' ? 'Create your little space' : 'Reset password'}</h1><p className="mt-1 text-sm text-muted-foreground">{mode === 'login' ? 'Login untuk membuka dashboard jualanmu.' : mode === 'register' ? 'Buat akun agar data jualan tersimpan aman.' : 'Kami akan mengirim link reset ke emailmu.'}</p></div><form onSubmit={submit} className="mt-7 space-y-4"><div className="space-y-2"><Label htmlFor="auth-email">Email</Label><Input id="auth-email" type="email" autoComplete="email" required value={email} onChange={e=>setEmail(e.target.value)} placeholder="nama@email.com" /></div>{mode !== 'reset' && <div className="space-y-2"><Label htmlFor="auth-password">Password</Label><Input id="auth-password" type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={8} required value={password} onChange={e=>setPassword(e.target.value)} placeholder="Minimal 8 karakter" /></div>}<Button className="w-full" disabled={busy}>{busy ? 'Memproses…' : mode === 'login' ? 'Login' : mode === 'register' ? 'Buat akun' : 'Kirim link reset'}</Button></form>{notice && <p role="status" className="mt-4 rounded-xl bg-accent p-3 text-sm">{notice}</p>}{auth.linkError && <p className="mt-3 text-sm text-destructive">{auth.linkError}</p>}<div className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"><button className="text-primary underline" onClick={()=>{setMode(mode==='login'?'register':'login');setNotice('')}}>{mode==='login'?'Buat akun baru':'Kembali ke login'}</button><button className="text-muted-foreground underline" onClick={()=>{setMode(mode==='reset'?'login':'reset');setNotice('')}}>{mode==='reset'?'Login':'Lupa password?'}</button></div></div></div>
+  return null
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { appearance } = useStore()
+  const { appearance, loading, loadError } = useStore()
+  const auth = useAuth()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  if (auth.status !== 'signedIn') return <AccountGate />
+  if (auth.recovery) return <div className="grid min-h-dvh place-items-center p-5"><form className="pw-card w-full max-w-md space-y-4 p-7" onSubmit={async (e) => { e.preventDefault(); const form = e.currentTarget; const data = new FormData(form); const password = String(data.get('new-password') ?? ''); if (password.length < 8) { window.alert('Password minimal 8 karakter.'); return } const error = await auth.updatePassword(password); if (error) window.alert(error) }}><h1 className="font-display text-2xl font-extrabold">Buat password baru</h1><Label htmlFor="new-password">Password baru</Label><Input id="new-password" name="new-password" type="password" minLength={8} required /><Button className="w-full">Simpan password</Button></form></div>
   const isActive = (to: string) => (to === '/' ? pathname === '/' : pathname.startsWith(to))
 
   return (
@@ -111,8 +151,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )
           })}
         </nav>
-        <div className="p-3">
+        <div className="space-y-2 p-3">
           <MusicMiniPlayer />
+          <div className="rounded-xl bg-muted/60 p-3"><p className="truncate text-xs text-muted-foreground">{auth.user?.email}</p><Button variant="ghost" size="sm" className="mt-1 w-full justify-start" onClick={() => void auth.signOut()}><LogOut /> Keluar</Button></div>
         </div>
       </aside>
 
@@ -125,9 +166,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       <main className="relative z-10 pb-28 lg:pb-10 lg:pl-64">
         <div className="mx-auto w-full max-w-content px-4 py-6 sm:px-6 lg:py-10">
-          <p className="mb-4 rounded-full border border-border bg-card/70 px-4 py-1.5 text-center text-[11px] font-semibold text-muted-foreground">
-            ☁️ Preview mode — sample orders shown; changes reset on refresh until cloud sync is switched on.
-          </p>
+          {loading && <div className="mb-4 rounded-xl bg-accent/70 px-4 py-2 text-xs text-muted-foreground">Memuat data akun…</div>}
+          {loadError && <div role="alert" className="mb-4 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm"><strong>Data belum berhasil dimuat.</strong><p className="mt-1">Pastikan SQL database sudah dijalankan di Supabase. Detail: {loadError}</p></div>}
           {children}
         </div>
       </main>
